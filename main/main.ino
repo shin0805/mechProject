@@ -7,9 +7,9 @@
 #include <utility/imumaths.h>
 
 #include <ros.h>
-// #include <std_msgs/Float32MultiArray.h>
+#include <std_msgs/Float32MultiArray.h>
 // #include <std_msgs/Int32MultiArray.h>
-#include <std_msgs/Int16MultiArray.h>
+//#include <std_msgs/Int16MultiArray.h>
 
 ros::NodeHandle nh;
 
@@ -31,7 +31,7 @@ void setAngle(int id, int angle)
   pwm.setPWM(PINS[id], 0, map(angle, 0, 180, MINS[id], MAXS[id]));
 }
 
-void servoCb(const std_msgs::Int16MultiArray& msg)
+void servoCb(const std_msgs::Float32MultiArray& msg)
 {
   //angles = msg;
   for (int i = 0; i < 6; ++i)
@@ -46,7 +46,7 @@ void servoCb(const std_msgs::Int16MultiArray& msg)
   }
 }
 
-ros::Subscriber<std_msgs::Int16MultiArray> servo_sub("servo/command", servoCb);
+ros::Subscriber<std_msgs::Float32MultiArray> servo_sub("servo/command", servoCb);
 
 void servoLoop()
 {
