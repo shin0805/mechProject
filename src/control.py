@@ -9,12 +9,14 @@ import sys
 rospy.init_node('control', anonymous=True)
 
 # Float32MultiArray型のメッセージを定義
-data = std_msgs.msg.Int16MultiArray()
+data = std_msgs.msg.Float32MultiArray()
+# see https://answers.ros.org/question/380890/unable-to-publish-float64multiarray-in-python/
+data.layout.dim = [std_msgs.msg.MultiArrayDimension(label='dim0', size=6, stride=6*4)]
 # data.layout.append(std_msgs.msg.MultiArrayLayout())
 # data.layout.dim[0].size = 6
 
 # パブリッシュするトピックを定義
-pub = rospy.Publisher('servo/command', std_msgs.msg.Int16MultiArray, queue_size=1)
+pub = rospy.Publisher('servo/command', std_msgs.msg.Float32MultiArray, queue_size=1)
 
 step = 0
 st = time.time()
