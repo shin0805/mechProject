@@ -1,14 +1,14 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 import rospy
-import std_msgs.msg
+from std_msgs.msg import Int16MultiArray
 import time
 
 rospy.init_node('control', anonymous=True)
 
-data = std_msgs.msg.Int16MultiArray()
+data = Int16MultiArray()
 
-pub = rospy.Publisher('servo/command', std_msgs.msg.Int16MultiArray, queue_size=1)
+pub = rospy.Publisher('servo/command', Int16MultiArray, queue_size=1)
 
 step = 0
 st = time.time()

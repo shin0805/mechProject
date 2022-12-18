@@ -5,7 +5,6 @@
 
 #include <ros.h>
 #include <std_msgs/Int16MultiArray.h>
-#include <std_msgs/UInt8MultiArray.h>
 #include <sensor_msgs/Imu.h>
 
 ros::NodeHandle nh;
@@ -50,7 +49,7 @@ void servoLoop()
 // Sensor
 Adafruit_BNO055 bno = Adafruit_BNO055(-1, 0x28, &Wire);
 sensor_msgs::Imu imu_msg;
-std_msgs::UInt8MultiArray calib_msg;
+std_msgs::Int16MultiArray calib_msg;
 
 ros::Publisher imu_pub("sensor/imu", &imu_msg);
 ros::Publisher calib_pub("sensor/calib", &calib_msg);
@@ -63,7 +62,7 @@ void sensorSetup()
   nh.advertise(imu_pub);
   nh.advertise(calib_pub);
 
-  calib_msg.data = (uint8_t*)malloc(sizeof(int8_t) * 4);
+  calib_msg.data = (int16_t*)malloc(sizeof(int16_t) * 4);
   calib_msg.data_length = 4;
 }
 
