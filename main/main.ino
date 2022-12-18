@@ -11,14 +11,14 @@ ros::NodeHandle nh;
 
 // Servo
 Adafruit_PWMServoDriver pwm = Adafruit_PWMServoDriver(0x40);
-const uint8_t PINS[6] = {0, 1, 2, 3, 4, 5};
-const uint8_t MINS[6] = {122, 110, 115, 102, 102, 102}; // 102, 110
-const int MAXS[6] = {490, 487, 485, 491, 491, 491}; // 491, 480
+int pins[6] = {0, 2, 4, 6, 8, 10};
+int mins[6] = {124, 112, 118, 115, 89, 112}; // 102
+int maxs[6] = {492, 487, 486, 490, 468, 489}; // 491
 uint16_t angles[6] = {90, 90, 90, 90, 90, 90};
 
 void setAngle(int id, int angle)
 {
-  pwm.setPWM(PINS[id], 0, map(angle, 0, 180, MINS[id], MAXS[id]));
+  pwm.setPWM(pins[id], 0, map(angle, 0, 180, mins[id], maxs[id]));
 }
 
 void servoCb(const std_msgs::Int16MultiArray& msg)
@@ -90,15 +90,25 @@ void sensorLoop()
   calib_pub.publish(&calib_msg);
 }
 
+// param
+void paramLoad() {
+  nh.getParam("/serial_node/pins", pins, 6);
+  nh.getParam("/serial_node/mins", mins, 6);
+  nh.getParam("/serial_node/maxs", maxs, 6);
+}
+
 // main
 unsigned long servo_timer = 0;
 unsigned long sensor_timer = 0;
+unsigned long param_timer = 0;
 
 void setup() {
   nh.initNode();
 
   servoSetup();
   sensorSetup();
+
+  paramLoad();
 
   delay(1000);
 }
@@ -114,6 +124,11 @@ void loop() {
   if ((now - sensor_timer) > 100 ) {
     sensorLoop();
     sensor_timer = now;
+  }
+
+  if ((now - param_timer) > 500 ) {
+    paramLoad();
+    param_timer = now;
   }
   
   nh.spinOnce();
