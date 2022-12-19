@@ -1,0 +1,2 @@
+ANGLE_MIN = 90 - 50
+ANGLE_MAX = 90 + 50

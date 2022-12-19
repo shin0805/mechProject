@@ -3,7 +3,6 @@
 import rospy
 from std_msgs.msg import Int16MultiArray
 from sensor_msgs.msg import Imu
-import numpy as np
 
 imu_msg = Imu()
 calib_msg = Int16MultiArray()
