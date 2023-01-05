@@ -39,23 +39,23 @@
 #include "acados_c/ocp_nlp_interface.h"
 #include "acados_c/external_function_interface.h"
 
-#define MODEL_NX     8
+#define MODEL_NX     9
 #define MODEL_NZ     0
 #define MODEL_NU     6
 #define MODEL_NP     0
 #define MODEL_NBX    6
-#define MODEL_NBX0   8
+#define MODEL_NBX0   9
 #define MODEL_NBU    0
 #define MODEL_NSBX   0
 #define MODEL_NSBU   0
-#define MODEL_NSH    0
+#define MODEL_NSH    1
 #define MODEL_NSG    0
 #define MODEL_NSPHI  0
 #define MODEL_NSHN   0
 #define MODEL_NSGN   0
 #define MODEL_NSPHIN 0
 #define MODEL_NSBXN  0
-#define MODEL_NS     0
+#define MODEL_NS     1
 #define MODEL_NSN    0
 #define MODEL_NG     0
 #define MODEL_NBXN   0
@@ -64,7 +64,7 @@
 #define MODEL_NY     8
 #define MODEL_NYN    2
 #define MODEL_N      200
-#define MODEL_NH     0
+#define MODEL_NH     1
 #define MODEL_NPHI   0
 #define MODEL_NHN    0
 #define MODEL_NPHIN  0
@@ -120,6 +120,8 @@ typedef struct model_solver_capsule
 
 
     // constraints
+    external_function_param_casadi *nl_constr_h_fun_jac;
+    external_function_param_casadi *nl_constr_h_fun;
 
 
 

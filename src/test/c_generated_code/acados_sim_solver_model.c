@@ -172,8 +172,8 @@ int model_acados_sim_create(sim_solver_capsule * capsule)
 
     /* initialize input */
     // x
-    double x0[8];
-    for (int ii = 0; ii < 8; ii++)
+    double x0[9];
+    for (int ii = 0; ii < 9; ii++)
         x0[ii] = 0.0;
 
     sim_in_set(model_sim_config, model_sim_dims,
@@ -189,11 +189,11 @@ int model_acados_sim_create(sim_solver_capsule * capsule)
                model_sim_in, "u", u0);
 
     // S_forw
-    double S_forw[112];
-    for (int ii = 0; ii < 112; ii++)
+    double S_forw[135];
+    for (int ii = 0; ii < 135; ii++)
         S_forw[ii] = 0.0;
-    for (int ii = 0; ii < 8; ii++)
-        S_forw[ii + ii * 8 ] = 1.0;
+    for (int ii = 0; ii < 9; ii++)
+        S_forw[ii + ii * 9 ] = 1.0;
 
 
     sim_in_set(model_sim_config, model_sim_dims,

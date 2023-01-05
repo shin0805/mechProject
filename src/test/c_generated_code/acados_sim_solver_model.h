@@ -37,7 +37,7 @@
 #include "acados_c/sim_interface.h"
 #include "acados_c/external_function_interface.h"
 
-#define MODEL_NX     8
+#define MODEL_NX     9
 #define MODEL_NZ     0
 #define MODEL_NU     6
 #define MODEL_NP     0

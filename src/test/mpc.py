@@ -1,7 +1,9 @@
 from acados_template import AcadosModel, AcadosOcp, AcadosOcpSolver
-from casadi import SX, vertcat, sin, cos, sqrt
+from casadi import SX, vertcat, sin, cos, sqrt, fabs
 
 import numpy as np
+
+L = 0.107  # length of the rod [m]
 
 
 def gen_model() -> AcadosModel:
@@ -11,7 +13,7 @@ def gen_model() -> AcadosModel:
     # constants
     M = 0.3  # mass [kg]
     I = 0.004  # inertia [kgm^2]
-    L = 0.107  # length of the rod [m]
+    # L = 0.107  # length of the rod [m]
     Xa = -0.002  # G to conner X a [m]
     Ya = 0.046  # G to conner Y a [m]
     Xb = -0.002  # G to conner X b [m]
@@ -21,6 +23,7 @@ def gen_model() -> AcadosModel:
     K = 0.001  # /s /m to force [Nms]
 
     # set up states
+    x = SX.sym('x')
     v = SX.sym('v')
     w = SX.sym('w')
     th0 = SX.sym('th0')
@@ -29,7 +32,7 @@ def gen_model() -> AcadosModel:
     th3 = SX.sym('th3')
     th4 = SX.sym('th4')
     th5 = SX.sym('th5')
-    model.x = vertcat(v, w, th0, th1, th2, th3, th4, th5)
+    model.x = vertcat(x, v, w, th0, th1, th2, th3, th4, th5)
 
     # set uo controls
     w0 = SX.sym('w0')
@@ -41,6 +44,7 @@ def gen_model() -> AcadosModel:
     model.u = vertcat(w0, w1, w2, w3, w4, w5)
 
     # xdot
+    x_dot = SX.sym('x_dot')
     v_dot = SX.sym('v_dot')
     w_dot = SX.sym('w_dot')
     th0_dot = SX.sym('th0_dot')
@@ -49,8 +53,8 @@ def gen_model() -> AcadosModel:
     th3_dot = SX.sym('th3_dot')
     th4_dot = SX.sym('th4_dot')
     th5_dot = SX.sym('th5_dot')
-    model.xdot = vertcat(v_dot, w_dot, th0_dot, th1_dot, th2_dot, th3_dot,
-                         th4_dot, th5_dot)
+    model.xdot = vertcat(x_dot, v_dot, w_dot, th0_dot, th1_dot, th2_dot,
+                         th3_dot, th4_dot, th5_dot)
 
     # dynamics
     xa = Xa + L * sin(th0)
@@ -72,7 +76,7 @@ def gen_model() -> AcadosModel:
     fyc = -K * w5 / len_G2c
 
     f_expl = vertcat(
-        (fxa + fxb + fxc) / M,
+        v, (fxa + fxb + fxc) / M,
         (fya * xa - fxa * ya + fyb * xb - fxb * yb + fyc * xc - fxc * yc) / I,
         w0, w1, w2, w3, w4, w5)
     model.f_impl_expr = model.xdot - f_expl
@@ -82,11 +86,12 @@ def gen_model() -> AcadosModel:
 
 
 N = 200
-X_DIM = 8
+X_DIM = 9
 U_DIM = 6
 COST_DIM = 8
 COST_E_DIM = COST_DIM - 6
-CONSTR_DIM = 12
+# CONSTR_DIM = 12
+CONSTR_DIM = 1
 
 
 def gen_ocp() -> AcadosOcp():
@@ -104,28 +109,33 @@ def gen_ocp() -> AcadosOcp():
     ocp.cost.W = QR
     ocp.cost.W_e = Q
 
-    v, w = ocp.model.x[0], ocp.model.x[1]
+    x, v, w = ocp.model.x[0], ocp.model.x[1], ocp.model.x[2]
     w0, w1, w2, w3, w4, w5 = ocp.model.u[0], ocp.model.u[1], ocp.model.u[
         2], ocp.model.u[3], ocp.model.u[4], ocp.model.u[5]
 
     ocp.cost.yref = np.zeros((COST_DIM, ))
     ocp.cost.yref_e = np.zeros((COST_E_DIM, ))
     # ocp.model.cost_y_expr = vertcat(1 / (v + 1e-6), w, w0, w1, w2, w3, w4, w5)
-    ocp.model.cost_y_expr = vertcat(v, w, w0, w1, w2, w3, w4, w5)
+    ocp.model.cost_y_expr = vertcat(1 / (x + 1e-3), w, w0, w1, w2, w3, w4, w5)
     # ocp.model.cost_y_expr_e = vertcat(1 / (v + 1e-6), w)
-    ocp.model.cost_y_expr_e = vertcat(v, w)
+    ocp.model.cost_y_expr_e = vertcat(1 / (x + 1e-3), w)
 
     # set constraints
     th_min = -0.9
     th_max = 0.9
+    th_mid = 0.1
     ocp.constraints.lbx = np.array(
-        [th_min, th_min, th_min, th_min, th_min, th_min])
+        [th_min, -th_mid, th_min, th_min, th_min, th_min])
     ocp.constraints.ubx = np.array(
-        [th_max, th_max, th_max, th_max, th_max, th_max])
+        [th_max, th_max, th_max, th_mid, th_max, th_mid])
     ocp.constraints.idxbx = np.array([2, 3, 4, 5, 6, 7])
 
-    # th0, th1, th2, th3, th4, th5 = ocp.model.x[2], ocp.model.x[3], ocp.model.x[
-    #     4], ocp.model.x[5], ocp.model.x[6], ocp.model.x[7]
+    th0, th1, th2, th3, th4, th5 = ocp.model.x[3], ocp.model.x[4], ocp.model.x[
+        5], ocp.model.x[6], ocp.model.x[7], ocp.model.x[8]
+
+    ha = L * (1 - sin(th0) * sin(th0) - sin(th1) * sin(th1))  # sqrt -> nan
+    hb = L * (1 - sin(th2) * sin(th2) - sin(th3) * sin(th3))  # sqrt -> nan
+    ocp.model.con_h_expr = vertcat(ha - hb)
 
     # ocp.model.con_h_expr = vertcat(th0 - th_min, th_max - th0, th1 - th_min,
     #                                th_max - th1, th2 - th_min, th_max - th2,
@@ -134,15 +144,16 @@ def gen_ocp() -> AcadosOcp():
 
     x0 = np.zeros(X_DIM)
     ocp.constraints.x0 = x0
-    # cost_weights = np.zeros(CONSTR_DIM)
-    # ocp.cost.zl = cost_weights
-    # ocp.cost.Zl = cost_weights
-    # ocp.cost.Zu = cost_weights
-    # ocp.cost.zu = cost_weights
 
-    # ocp.constraints.lh = np.zeros(CONSTR_DIM)
-    # ocp.constraints.uh = 1e4 * np.ones(CONSTR_DIM)
-    # ocp.constraints.idxsh = np.arange(CONSTR_DIM)
+    cost_weights = np.zeros(CONSTR_DIM)
+    ocp.cost.zl = cost_weights
+    ocp.cost.Zl = cost_weights
+    ocp.cost.Zu = cost_weights
+    ocp.cost.zu = cost_weights
+
+    ocp.constraints.lh = np.zeros(CONSTR_DIM)
+    ocp.constraints.uh = 1e4 * np.ones(CONSTR_DIM)
+    ocp.constraints.idxsh = np.arange(CONSTR_DIM)
 
     ocp.solver_options.qp_solver = 'PARTIAL_CONDENSING_HPIPM'
     ocp.solver_options.hessian_approx = 'GAUSS_NEWTON'
@@ -150,7 +161,8 @@ def gen_ocp() -> AcadosOcp():
     ocp.solver_options.nlp_solver_type = 'SQP'
     ocp.solver_options.qp_solver_cond_N = 1
     ocp.solver_options.qp_solver_iter_max = 10
-    ocp.solver_options.qp_tol = 1e-3
+    # ocp.solver_options.qp_tol = 1e-3
+    ocp.solver_options.qp_tol = 1e5
 
     # set prediction horizon
     T_IDXS = np.linspace(0, 10, N + 1)
@@ -165,16 +177,17 @@ def main():
     ocp = gen_ocp()
     solver = AcadosOcpSolver(ocp, json_file='acados_ocp.json')
 
-    W = np.asfortranarray(np.diag([1, 1, 1, 1, 1, 1, 1, 1]))
+    W_u = 1
+    W = np.asfortranarray(np.diag([1, 1, W_u, W_u, W_u, W_u, W_u, W_u]))
     for i in range(N):
         solver.cost_set(i, 'W', W)
     solver.cost_set(N, 'W', W[:COST_E_DIM, :COST_E_DIM])
 
     yref = np.zeros((N + 1, COST_DIM))
-    yref[:, 0] = 0.01
-    for i in range(N):
-        solver.cost_set(i, "yref", yref[i])
-    solver.cost_set(N, "yref", yref[N][:COST_E_DIM])
+    # yref[:, 0] = 0.01
+    # for i in range(N):
+    #     solver.cost_set(i, "yref", yref[i])
+    # solver.cost_set(N, "yref", yref[N][:COST_E_DIM])
 
     status = solver.solve()
     solver.print_statistics()

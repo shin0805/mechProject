@@ -45,13 +45,26 @@ extern "C" {
   #endif
 #endif
 
-static const casadi_int casadi_s0[12] = {8, 1, 0, 8, 0, 1, 2, 3, 4, 5, 6, 7};
+static const casadi_int casadi_s0[13] = {9, 1, 0, 9, 0, 1, 2, 3, 4, 5, 6, 7, 8};
 static const casadi_int casadi_s1[3] = {0, 0, 0};
 static const casadi_int casadi_s2[6] = {2, 1, 0, 2, 0, 1};
-static const casadi_int casadi_s3[11] = {8, 8, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+static const casadi_int casadi_s3[13] = {9, 9, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0};
 
-/* model_cost_y_e_hess:(i0[8],i1[],i2[],i3[2],i4[])->(o0[8x8,0nz]) */
+/* model_cost_y_e_hess:(i0[9],i1[],i2[],i3[2],i4[])->(o0[9x9,1nz]) */
 static int casadi_f0(const casadi_real** arg, casadi_real** res, casadi_int* iw, casadi_real* w, int mem) {
+  casadi_real a0, a1, a2, a3;
+  a0=arg[3]? arg[3][0] : 0;
+  a1=arg[0]? arg[0][0] : 0;
+  a2=1.0000000000000000e-03;
+  a1=(a1+a2);
+  a2=(1./a1);
+  a3=(a2/a1);
+  a3=(a3/a1);
+  a2=(a2/a1);
+  a2=(a2/a1);
+  a3=(a3+a2);
+  a0=(a0*a3);
+  if (res[0]!=0) res[0][0]=a0;
   return 0;
 }
 
