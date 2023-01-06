@@ -13,7 +13,7 @@ rospy.init_node('control', anonymous=True)
 command = Int16MultiArray()
 
 commands = SLEEPING_POS # SKIP
-commands = np.concatenate([commands, SLEEPING_POS], 0) # SKIP
+commands = np.concatenate([commands, STANDING_POS], 0) # SKIP
 commands = np.concatenate([commands, STANDING_POS], 0) # SKIP
 
 pub = rospy.Publisher('servo/command', Int16MultiArray, queue_size=1)
@@ -37,7 +37,15 @@ def addRise():
   commands = np.concatenate([commands, linspace(SLEEPING_POS, STANDING_POS, 30)], 0)
 
 
-addRise()
+# addRise()
+for i in range(5):
+  commands = np.concatenate([commands, linspace(STANDING_POS, FORRIGHT_POS, 2)], 0) 
+  commands = np.concatenate([commands, linspace(FORRIGHT_POS, STANDING_POS, 15)], 0) 
+
+for i in range(5):
+  commands = np.concatenate([commands, linspace(STANDING_POS, FORLEFT_POS, 2)], 0) 
+  commands = np.concatenate([commands, linspace(FORLEFT_POS, STANDING_POS, 15)], 0) 
+
 # commands = np.concatenate([commands, linspace(STANDING_POS, SLEEPING_POS, 30)], 0) 
 # commands = np.concatenate([commands, linspace(SLEEPING_POS, STANDING_POS, 30)], 0)
 
