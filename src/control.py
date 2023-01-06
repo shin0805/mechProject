@@ -28,21 +28,31 @@ def linspace(start, end, step):
   R =  np.concatenate([coef, coef[:, ::-1]], 0)
   return np.dot(L, R).T
 
-commands = np.concatenate([commands, linspace(SLEEPING_POS, STANDING_POS, 30)], 0)
-commands = np.concatenate([commands, linspace(STANDING_POS, SLEEPING_POS, 30)], 0) 
-commands = np.concatenate([commands, linspace(SLEEPING_POS, STANDING_POS, 30)], 0)
+def addRise():
+  global commands
+  commands = np.concatenate([commands, linspace(STANDING_POS, EXTENTION_POS, 10)], 0) 
+  commands = np.concatenate([commands, linspace(EXTENTION_POS, ROLLED_POS, 1)], 0) 
+  commands = np.concatenate([commands, linspace(ROLLED_POS, ROLLED_POS, 10)], 0) 
+  commands = np.concatenate([commands, linspace(ROLLED_POS, SLEEPING_POS, 30)], 0) 
+  commands = np.concatenate([commands, linspace(SLEEPING_POS, STANDING_POS, 30)], 0)
+
+
+addRise()
+# commands = np.concatenate([commands, linspace(STANDING_POS, SLEEPING_POS, 30)], 0) 
+# commands = np.concatenate([commands, linspace(SLEEPING_POS, STANDING_POS, 30)], 0)
 
 rate = rospy.Rate(20)
 start_time = time.time()
 while not rospy.is_shutdown():
-  foot = STANDING_POS.copy()
-  foot[0, 0] += 10 * np.sin(4 * (time.time() - start_time))
-  foot[0, 1] += 10 * np.cos(4 * (time.time() - start_time))
-  foot[0, 2] += 10 * np.cos(4 * (time.time() - start_time))
-  foot[0, 3] += 10 * np.sin(4 * (time.time() - start_time))
-  foot[0, 4] += 10 * np.sin(4 * (time.time() - start_time))
-  foot[0, 5] += 10 * np.cos(4 * (time.time() - start_time))
-  commands = np.concatenate([commands, foot], 0)
+  # foot = STANDING_POS.copy()
+  # foot[0, 0] += 10 * np.sin(4 * (time.time() - start_time))
+  # foot[0, 1] += 10 * np.cos(4 * (time.time() - start_time))
+  # foot[0, 2] += 10 * np.cos(4 * (time.time() - start_time))
+  # foot[0, 3] += 10 * np.sin(4 * (time.time() - start_time))
+  # foot[0, 4] += 10 * np.sin(4 * (time.time() - start_time))
+  # foot[0, 5] += 10 * np.cos(4 * (time.time() - start_time))
+  # commands = np.concatenate([commands, foot], 0)
+
   command.data = commands[0, :].tolist()
   if (commands.shape[0] - 1):
     commands = np.delete(commands, 0, 0)
