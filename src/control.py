@@ -32,22 +32,28 @@ def addRise():
   global commands
   commands = np.concatenate([commands, linspace(STANDING_POS, EXTENTION_POS, 10)], 0) 
   commands = np.concatenate([commands, linspace(EXTENTION_POS, ROLLED_POS, 1)], 0) 
-  commands = np.concatenate([commands, linspace(ROLLED_POS, ROLLED_POS, 10)], 0) 
-  commands = np.concatenate([commands, linspace(ROLLED_POS, SLEEPING_POS, 30)], 0) 
+  commands = np.concatenate([commands, linspace(ROLLED_POS, SLEEPING_POS, 40)], 0) 
   commands = np.concatenate([commands, linspace(SLEEPING_POS, STANDING_POS, 30)], 0)
 
 
-# addRise()
-for i in range(5):
-  commands = np.concatenate([commands, linspace(STANDING_POS, FORRIGHT_POS, 2)], 0) 
-  commands = np.concatenate([commands, linspace(FORRIGHT_POS, STANDING_POS, 15)], 0) 
+addRise()
+# for i in range(5):
+#   commands = np.concatenate([commands, linspace(STANDING_POS, FORRIGHT_POS, 2)], 0) 
+#   commands = np.concatenate([commands, linspace(FORRIGHT_POS, STANDING_POS, 15)], 0) 
 
-for i in range(5):
-  commands = np.concatenate([commands, linspace(STANDING_POS, FORLEFT_POS, 2)], 0) 
-  commands = np.concatenate([commands, linspace(FORLEFT_POS, STANDING_POS, 15)], 0) 
+# for i in range(5):
+#   commands = np.concatenate([commands, linspace(STANDING_POS, FORLEFT_POS, 2)], 0) 
+#   commands = np.concatenate([commands, linspace(FORLEFT_POS, STANDING_POS, 15)], 0) 
 
 # commands = np.concatenate([commands, linspace(STANDING_POS, SLEEPING_POS, 30)], 0) 
 # commands = np.concatenate([commands, linspace(SLEEPING_POS, STANDING_POS, 30)], 0)
+
+# for i in range(5):
+#   commands = np.concatenate([commands, np.array([[90, 80, 90, 90, 90, 100]])], 0) 
+#   commands = np.concatenate([commands, np.array([[90, 80, 90, 45, 90, 100]])], 0)
+#   commands = np.concatenate([commands, np.array([[90, 80, 90, 90, 90, 100]])], 0) 
+#   commands = np.concatenate([commands, np.array([[90, 80, 90, 135, 90, 100]])], 0)
+
 
 rate = rospy.Rate(20)
 start_time = time.time()
