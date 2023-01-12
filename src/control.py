@@ -35,15 +35,26 @@ def addRise():
   commands = np.concatenate([commands, linspace(ROLLED_POS, SLEEPING_POS, 40)], 0) 
   commands = np.concatenate([commands, linspace(SLEEPING_POS, STANDING_POS, 30)], 0)
 
+def addTurn(is_left):
+  global commands
+  if is_left:
+    commands = np.concatenate([commands, linspace(STANDING_POS, FORLEFT_POS1, 3)], 0) 
+    commands = np.concatenate([commands, linspace(FORLEFT_POS1, FORLEFT_POS2, 3)], 0) 
+    commands = np.concatenate([commands, linspace(FORLEFT_POS2, FORLEFT_POS3, 3)], 0) 
+    commands = np.concatenate([commands, linspace(FORLEFT_POS3, STANDING_POS, 15)], 0) 
+  else:
+    commands = np.concatenate([commands, linspace(STANDING_POS, FORRIGHT_POS1, 3)], 0) 
+    commands = np.concatenate([commands, linspace(FORRIGHT_POS1, FORRIGHT_POS2, 3)], 0) 
+    commands = np.concatenate([commands, linspace(FORRIGHT_POS2, FORRIGHT_POS3, 3)], 0) 
+    commands = np.concatenate([commands, linspace(FORRIGHT_POS3, STANDING_POS, 15)], 0) 
 
-addRise()
-# for i in range(5):
-#   commands = np.concatenate([commands, linspace(STANDING_POS, FORRIGHT_POS, 2)], 0) 
-#   commands = np.concatenate([commands, linspace(FORRIGHT_POS, STANDING_POS, 15)], 0) 
 
-# for i in range(5):
-#   commands = np.concatenate([commands, linspace(STANDING_POS, FORLEFT_POS, 2)], 0) 
-#   commands = np.concatenate([commands, linspace(FORLEFT_POS, STANDING_POS, 15)], 0) 
+# addRise()
+for i in range(5):
+  addTurn(False)
+
+for i in range(5):
+  addTurn(True)
 
 # commands = np.concatenate([commands, linspace(STANDING_POS, SLEEPING_POS, 30)], 0) 
 # commands = np.concatenate([commands, linspace(SLEEPING_POS, STANDING_POS, 30)], 0)
