@@ -6,15 +6,16 @@
 #include <ros.h>
 #include <std_msgs/Int16MultiArray.h>
 #include <sensor_msgs/Imu.h>
+#include <geometry_msgs/Vector3.h>
 
 ros::NodeHandle nh;
 
 // Servo
 Adafruit_PWMServoDriver pwm = Adafruit_PWMServoDriver(0x40);
 int pins[6] = {0, 2, 4, 6, 8, 10};
-int mins[6] = {124, 112, 118, 115, 89, 112}; // 102
-int maxs[6] = {492, 487, 486, 490, 468, 489}; // 491
-uint16_t angles[6] = {90, 90, 90, 90, 90, 90};
+int mins[6] = {124, 112, 118, 165, 89, 112}; // 102
+int maxs[6] = {492, 487, 486, 520, 468, 489}; // 491
+uint16_t angles[6] = {90, 80, 90, 100, 90, 100};
 
 void setAngle(int id, int angle)
 {
@@ -49,9 +50,11 @@ void servoLoop()
 // Sensor
 Adafruit_BNO055 bno = Adafruit_BNO055(-1, 0x28, &Wire);
 sensor_msgs::Imu imu_msg;
+geometry_msgs::Vector3 euler_msg;
 std_msgs::Int16MultiArray calib_msg;
 
 ros::Publisher imu_pub("sensor/imu", &imu_msg);
+ros::Publisher euler_pub("sensor/euler", &euler_msg);
 ros::Publisher calib_pub("sensor/calib", &calib_msg);
 
 void sensorSetup()
@@ -60,6 +63,7 @@ void sensorSetup()
   bno.setExtCrystalUse(true);
 
   nh.advertise(imu_pub);
+  nh.advertise(euler_pub);
   nh.advertise(calib_pub);
 
   calib_msg.data = (int16_t*)malloc(sizeof(int16_t) * 4);
@@ -74,6 +78,11 @@ void sensorLoop()
   imu_msg.orientation.z = quat.z();
   imu_msg.orientation.w = quat.w();
 
+  imu::Vector<3> euler = bno.getVector(Adafruit_BNO055::VECTOR_EULER);
+  euler_msg.x = euler.x();
+  euler_msg.y = euler.y();
+  euler_msg.z = euler.z();
+
   imu::Vector<3> acc = bno.getVector(Adafruit_BNO055::VECTOR_ACCELEROMETER);
   imu_msg.linear_acceleration.x = acc.x();
   imu_msg.linear_acceleration.y = acc.y();
@@ -87,6 +96,7 @@ void sensorLoop()
   calib_msg.data[3] = mag;
 
   imu_pub.publish(&imu_msg);
+  euler_pub.publish(&euler_msg);
   calib_pub.publish(&calib_msg);
 }
 
