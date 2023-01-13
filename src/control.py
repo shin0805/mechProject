@@ -51,17 +51,17 @@ def addTurn(is_left):
 def addStep():
   global commands
   commands = np.concatenate([commands, linspace(STANDING_POS, WALKING_POS1, 2)], 0) 
-  commands = np.concatenate([commands, linspace(WALKING_POS1, WALKING_POS1, 4)], 0) 
+  # commands = np.concatenate([commands, linspace(WALKING_POS1, WALKING_POS1, 4)], 0) 
   commands = np.concatenate([commands, linspace(WALKING_POS1, WALKING_POS2, 2)], 0)
-  commands = np.concatenate([commands, linspace(WALKING_POS2, WALKING_POS2, 4)], 0)
+  # commands = np.concatenate([commands, linspace(WALKING_POS2, WALKING_POS2, 4)], 0)
   commands = np.concatenate([commands, linspace(WALKING_POS2, WALKING_POS3, 2)], 0)
-  commands = np.concatenate([commands, linspace(WALKING_POS3, WALKING_POS3, 4)], 0)
+  # commands = np.concatenate([commands, linspace(WALKING_POS3, WALKING_POS3, 4)], 0)
   commands = np.concatenate([commands, linspace(WALKING_POS3, WALKING_POS4, 2)], 0)
-  commands = np.concatenate([commands, linspace(WALKING_POS4, WALKING_POS4, 4)], 0)
+  # commands = np.concatenate([commands, linspace(WALKING_POS4, WALKING_POS4, 4)], 0)
   # commands = np.concatenate([commands, linspace(WALKING_POS4, STANDING_POS, 8)], 0)
 
   commands = np.concatenate([commands, linspace(WALKING_POS4, STANDING_POS, 8)], 0)
-  commands = np.concatenate([commands, linspace(STANDING_POS, STANDING_POS, 4)], 0)
+  # commands = np.concatenate([commands, linspace(STANDING_POS, STANDING_POS, 4)], 0)
 
   # commands = np.concatenate([commands, linspace(WALKING_POS3, WALKING_POS4, 2)], 0)
   # commands = np.concatenate([commands, linspace(WALKING_POS4, WALKING_POS4, 20)], 0)
