@@ -56,11 +56,11 @@ def addStep():
   commands = np.concatenate([commands, linspace(WALKING_POS2, WALKING_POS2, 4)], 0)
   commands = np.concatenate([commands, linspace(WALKING_POS2, WALKING_POS3, 2)], 0)
   commands = np.concatenate([commands, linspace(WALKING_POS3, WALKING_POS3, 4)], 0)
-  commands = np.concatenate([commands, linspace(WALKING_POS3, STANDING_POS, 8)], 0)
-  # commands = np.concatenate([commands, linspace(WALKING_POS3, WALKING_POS4, 2)], 0)
-  # commands = np.concatenate([commands, linspace(WALKING_POS4, WALKING_POS4, 4)], 0)
+  commands = np.concatenate([commands, linspace(WALKING_POS3, WALKING_POS4, 2)], 0)
+  commands = np.concatenate([commands, linspace(WALKING_POS4, WALKING_POS4, 4)], 0)
   # commands = np.concatenate([commands, linspace(WALKING_POS4, STANDING_POS, 8)], 0)
 
+  commands = np.concatenate([commands, linspace(WALKING_POS4, STANDING_POS, 8)], 0)
   commands = np.concatenate([commands, linspace(STANDING_POS, STANDING_POS, 4)], 0)
 
   # commands = np.concatenate([commands, linspace(WALKING_POS3, WALKING_POS4, 2)], 0)
@@ -77,8 +77,8 @@ def addStep():
 # for i in range(5):
 #   addTurn(True)
 
-# for i in  range(5):
-addStep()
+for i in  range(5):
+  addStep()
 
 # commands = np.concatenate([commands, linspace(STANDING_POS, SLEEPING_POS, 30)], 0) 
 # commands = np.concatenate([commands, linspace(SLEEPING_POS, STANDING_POS, 30)], 0)
