@@ -48,22 +48,44 @@ def addTurn(is_left):
     commands = np.concatenate([commands, linspace(FORRIGHT_POS2, FORRIGHT_POS3, 3)], 0) 
     commands = np.concatenate([commands, linspace(FORRIGHT_POS3, STANDING_POS, 15)], 0) 
 
+def addStep():
+  global commands
+  commands = np.concatenate([commands, linspace(STANDING_POS, WALKING_POS1, 2)], 0) 
+  commands = np.concatenate([commands, linspace(WALKING_POS1, WALKING_POS1, 4)], 0) 
+  commands = np.concatenate([commands, linspace(WALKING_POS1, WALKING_POS2, 2)], 0)
+  commands = np.concatenate([commands, linspace(WALKING_POS2, WALKING_POS2, 4)], 0)
+  commands = np.concatenate([commands, linspace(WALKING_POS2, WALKING_POS3, 2)], 0)
+  commands = np.concatenate([commands, linspace(WALKING_POS3, WALKING_POS3, 4)], 0)
+  commands = np.concatenate([commands, linspace(WALKING_POS3, STANDING_POS, 8)], 0)
+  # commands = np.concatenate([commands, linspace(WALKING_POS3, WALKING_POS4, 2)], 0)
+  # commands = np.concatenate([commands, linspace(WALKING_POS4, WALKING_POS4, 4)], 0)
+  # commands = np.concatenate([commands, linspace(WALKING_POS4, STANDING_POS, 8)], 0)
+
+  commands = np.concatenate([commands, linspace(STANDING_POS, STANDING_POS, 4)], 0)
+
+  # commands = np.concatenate([commands, linspace(WALKING_POS3, WALKING_POS4, 2)], 0)
+  # commands = np.concatenate([commands, linspace(WALKING_POS4, WALKING_POS4, 20)], 0)
+  # commands = np.concatenate([commands, linspace(WALKING_POS4, WALKING_POS5, 2)], 0)
+  # commands = np.concatenate([commands, linspace(WALKING_POS5, WALKING_POS5, 20)], 0)
+  # commands = np.concatenate([commands, linspace(WALKING_POS5, WALKING_POS6, 2)], 0)
+
 
 # addRise()
-for i in range(5):
-  addTurn(False)
+# for i in range(5):
+#   addTurn(False)
+# 
+# for i in range(5):
+#   addTurn(True)
 
-for i in range(5):
-  addTurn(True)
+# for i in  range(5):
+addStep()
 
 # commands = np.concatenate([commands, linspace(STANDING_POS, SLEEPING_POS, 30)], 0) 
 # commands = np.concatenate([commands, linspace(SLEEPING_POS, STANDING_POS, 30)], 0)
 
-# for i in range(5):
-#   commands = np.concatenate([commands, np.array([[90, 80, 90, 90, 90, 100]])], 0) 
-#   commands = np.concatenate([commands, np.array([[90, 80, 90, 45, 90, 100]])], 0)
-#   commands = np.concatenate([commands, np.array([[90, 80, 90, 90, 90, 100]])], 0) 
-#   commands = np.concatenate([commands, np.array([[90, 80, 90, 135, 90, 100]])], 0)
+
+
+
 
 
 rate = rospy.Rate(20)
