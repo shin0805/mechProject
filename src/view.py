@@ -34,7 +34,6 @@ def eulerCb(msg):
   print(str(euler_msg.y))
   print(str(euler_msg.z))
 
-
 def calibCb(msg):
   calib_msg = msg
   print("-- calib --")
@@ -42,7 +41,7 @@ def calibCb(msg):
   print("\n")
 
 rospy.init_node('view', anonymous=True)
-rospy.Subscriber("sensor/imu", Imu, imuCb)
+# rospy.Subscriber("sensor/imu", Imu, imuCb)
 rospy.Subscriber("sensor/euler", Vector3, eulerCb)
-rospy.Subscriber("sensor/calib", Int16MultiArray, calibCb)
+# rospy.Subscriber("sensor/calib", Int16MultiArray, calibCb)
 rospy.spin()
