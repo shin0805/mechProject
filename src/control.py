@@ -101,6 +101,7 @@ rospy.Subscriber("sensor/euler", Vector3, eulerCb)
 
 
 
+i = 0
 flag = 0
 plan = 1
 sensor = 0
@@ -116,13 +117,15 @@ while not rospy.is_shutdown():
       print("===== flag 1 =====")
       if sensor == 0:
         init_euler = euler_msg.x
-      if abs(euler_msg.x - init_euler) < 75 or abs(euler_msg.x - init_euler) > 300:
+      if (abs(euler_msg.x - init_euler) < 75 or abs(euler_msg.x - init_euler) > 300) and i < 10:
         print(abs(euler_msg.x - init_euler))
         sensor = 1
-        addTurn(False)
+        i += 1
+        addTurn(True)
       else:
         addStep()
         sensor = 0
+        i = 0
     elif flag == 2:
       print("===== flag 2 =====")
       addStep()
@@ -131,23 +134,27 @@ while not rospy.is_shutdown():
       print("===== flag 3 =====")
       if sensor == 0:
         init_euler = euler_msg.x
-      if abs(euler_msg.x - init_euler) < 75 or abs(euler_msg.x - init_euler) > 300:
+      if (abs(euler_msg.x - init_euler) < 75 or abs(euler_msg.x - init_euler) > 300) and i < 10:
         print(abs(euler_msg.x - init_euler))
         sensor = 1
-        addTurn(True)
+        i += 0
+        addTurn(False)
       else:
         addStep()
         sensor = 0
+        i = 0
     elif flag == 4:
       print("===== flag 4 =====")
       commands = np.concatenate([commands, linspace(STANDING_POS, ROLLED_POS, 10)], 0)
       commands = np.concatenate([commands, linspace(ROLLED_POS, STANDING_POS, 2)], 0)
       commands = np.concatenate([commands, linspace(STANDING_POS, STANDING_POS, 50)], 0)
       addRise()
-      commands = np.concatenate([commands, linspace(STANDING_POS, SLEEPING_POS, 30)], 0) 
-      commands = np.concatenate([commands, linspace(SLEEPING_POS, STANDING_POS, 30)], 0)
-
-    
+      commands = np.concatenate([commands, linspace(STANDING_POS, SLEEPING_POS, 15)], 0) 
+      commands = np.concatenate([commands, linspace(SLEEPING_POS, STANDING_POS, 15)], 0)
+    elif flag == 5:
+      print("===== flag 5 =====")
+      for i in range(15):
+        addStep()
     plan = 0
 
   command.data = commands[0, :].tolist()
