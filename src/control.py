@@ -117,7 +117,7 @@ while not rospy.is_shutdown():
       print("===== flag 1 =====")
       if sensor == 0:
         init_euler = euler_msg.x
-      if (abs(euler_msg.x - init_euler) < 75 or abs(euler_msg.x - init_euler) > 300) and i < 10:
+      if (abs(euler_msg.x - init_euler) < 55 or abs(euler_msg.x - init_euler) > 300) and i < 10:
         print(abs(euler_msg.x - init_euler))
         sensor = 1
         i += 1
@@ -128,32 +128,31 @@ while not rospy.is_shutdown():
         i = 0
     elif flag == 2:
       print("===== flag 2 =====")
-      addStep()
-      addStep()
+      for i in range(5):
+        addStep()
     elif flag == 3:
       print("===== flag 3 =====")
       if sensor == 0:
         init_euler = euler_msg.x
-      if (abs(euler_msg.x - init_euler) < 75 or abs(euler_msg.x - init_euler) > 300) and i < 10:
+      if (abs(euler_msg.x - init_euler) < 55 or abs(euler_msg.x - init_euler) > 300) and i < 10:
         print(abs(euler_msg.x - init_euler))
         sensor = 1
         i += 0
         addTurn(False)
       else:
-        addStep()
+        # addStep()
+        commands = np.concatenate([commands, linspace(STANDING_POS, ROLLED_POS, 10)], 0)
         sensor = 0
         i = 0
     elif flag == 4:
       print("===== flag 4 =====")
-      commands = np.concatenate([commands, linspace(STANDING_POS, ROLLED_POS, 10)], 0)
+      # commands = np.concatenate([commands, linspace(STANDING_POS, ROLLED_POS, 10)], 0)
       commands = np.concatenate([commands, linspace(ROLLED_POS, STANDING_POS, 2)], 0)
       commands = np.concatenate([commands, linspace(STANDING_POS, STANDING_POS, 50)], 0)
       addRise()
-      commands = np.concatenate([commands, linspace(STANDING_POS, SLEEPING_POS, 15)], 0) 
-      commands = np.concatenate([commands, linspace(SLEEPING_POS, STANDING_POS, 15)], 0)
     elif flag == 5:
       print("===== flag 5 =====")
-      for i in range(15):
+      for i in range(5):
         addStep()
     plan = 0
 
