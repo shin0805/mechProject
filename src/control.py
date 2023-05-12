@@ -21,7 +21,9 @@ pub = rospy.Publisher('servo/command', Int16MultiArray, queue_size=1)
 euler_msg = Vector3()
 
 def safeClip(command):
-  command.data = np.clip(np.array(command.data), ANGLE_MIN, ANGLE_MAX).tolist()
+  # command.data = np.clip(np.array(command.data), ANGLE_MIN, ANGLE_MAX).tolist()
+  tmp = np.clip(np.array(command.data), ANGLE_MIN, ANGLE_MAX).tolist()
+  command.data = list(map(int, tmp))
   return command
 
 def linspace(start, end, step):
@@ -111,13 +113,16 @@ while not rospy.is_shutdown():
   if plan:
     if flag == 0:
       print("===== flag 0 =====")
+      # for i in range(100):
+      #   addStep()
       addStep()
       addStep()
     elif flag == 1:
       print("===== flag 1 =====")
       if sensor == 0:
         init_euler = euler_msg.x
-      if (abs(euler_msg.x - init_euler) < 55 or abs(euler_msg.x - init_euler) > 300) and i < 10:
+      # if (abs(euler_msg.x - init_euler) < 55 or abs(euler_msg.x - init_euler) > 300) and i < 10:
+      if (abs(euler_msg.x - init_euler) < 55 or abs(euler_msg.x - init_euler) > 300) and i < 3:
         print(abs(euler_msg.x - init_euler))
         sensor = 1
         i += 1
@@ -134,7 +139,8 @@ while not rospy.is_shutdown():
       print("===== flag 3 =====")
       if sensor == 0:
         init_euler = euler_msg.x
-      if (abs(euler_msg.x - init_euler) < 55 or abs(euler_msg.x - init_euler) > 300) and i < 10:
+      # if (abs(euler_msg.x - init_euler) < 55 or abs(euler_msg.x - init_euler) > 300) and i < 10:
+      if (abs(euler_msg.x - init_euler) < 30 or abs(euler_msg.x - init_euler) > 330) and i < 3:
         print(abs(euler_msg.x - init_euler))
         sensor = 1
         i += 0

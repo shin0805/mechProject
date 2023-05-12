@@ -19,6 +19,7 @@ FORLEFT_POS1 = np.array([[90, 80, 90, 100, 120, 100]])
 FORLEFT_POS2 = np.array([[90, 80, 90, 140, 120, 100]])
 FORLEFT_POS3 = np.array([[120, 80, 90, 140, 120, 100]])
 
+# WALKING_POS1 = np.array([[90, 80, 90, 100, 90, 120]])
 WALKING_POS1 = np.array([[90, 80, 90, 100, 90, 120]])
 WALKING_POS2 = np.array([[60, 80, 90, 100, 90, 120]])
 WALKING_POS3 = np.array([[60, 80, 90, 100, 90, 140]])
