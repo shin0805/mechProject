@@ -1,3 +1,5 @@
+#include <Adafruit_BNO055.h>
+
 #include <Wire.h>
 #include <Adafruit_PWMServoDriver.h>
 #include <Adafruit_BNO055.h>
@@ -113,6 +115,8 @@ unsigned long sensor_timer = 0;
 unsigned long param_timer = 0;
 
 void setup() {
+  // nh.getHardware()->setBaud(9600);
+  // nh.getHardware()->setBaud(115200);
   nh.initNode();
 
   servoSetup();
@@ -131,7 +135,7 @@ void loop() {
     servo_timer = now;
   }
 
-  if ((now - sensor_timer) > 100 ) {
+  if ((now - sensor_timer) > 50 ) {
     sensorLoop();
     sensor_timer = now;
   }
