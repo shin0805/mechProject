@@ -3,9 +3,6 @@
 import os
 import time
 
-import torch
-import torch.nn as nn
-from rl_games.algos_torch.models import ModelA2CContinuousLogStd
 import onnxruntime
 import numpy as np
 
@@ -56,10 +53,16 @@ def run_onnx_model(model_path, input_data):
 
   return outputs[0]
 
-def simRad2realDeg(rad):
-    # TODO
-    pass
-
+def simRad2realDeg(sim_rad):
+    deg = -np.rad2deg(sim_rad) + 90
+    real_deg = np.zeros([1, 6])
+    real_deg[0, 0] = deg[0, 4]
+    real_deg[0, 1] = deg[0, 5]
+    real_deg[0, 2] = deg[0, 2]
+    real_deg[0, 3] = deg[0, 3]
+    real_deg[0, 4] = deg[0, 0]
+    real_deg[0, 5] = deg[0, 1]
+    return real_deg
 
 if __name__=="__main__":
   rospy.init_node('rl_control', anonymous=True)
@@ -77,18 +80,15 @@ if __name__=="__main__":
   while not rospy.is_shutdown():
     # action
     action = run_onnx_model(model_path, np.concatenate([rotation_history.flatten(), action_history.flatten()], 0))
-    print(action)
-  
-    commands = np.concatenate([commands, linspace(ROLLED_POS, STANDING_POS, 2)], 0)
-    # commands = np.concatenate([commands, simRad2realDeg(action)], 0)
+    commands = np.concatenate([commands, simRad2realDeg(action)], 0)
     command.data = commands[0, :].tolist()
     if (commands.shape[0] - 1):
       commands = np.delete(commands, 0, 0)
-    # print(command.data)
+    print(command.data)
     pub.publish(safeClip(command))
 
     # obs
-    rotation = np.array([[imu_msg.orientation.x, imu_msg.orientation.y, imu_msg.orientation.z, imu_msg.orientation.w]])
+    rotation = np.array([[-imu_msg.orientation.x, -imu_msg.orientation.y, imu_msg.orientation.z, imu_msg.orientation.w]])
     rotation_history = np.concatenate([rotation, rotation_history], 0)[:-1, :]
     action_history = np.concatenate([action, action_history], 0)[:-1, :]
 
