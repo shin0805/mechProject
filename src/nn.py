@@ -70,9 +70,9 @@ if __name__=="__main__":
   rospy.Subscriber("sensor/imu", Imu, imuCb)
   pub = rospy.Publisher('servo/command', Int16MultiArray, queue_size=1)
   rate = rospy.Rate(20)
-  model_path=(os.environ['HOME'] + "/IsaacGymEnvs/isaacgymenvs/runs/Chair_sample/nn/Chair.onnx")
-  numRotationHis = 20
-  numActionHis = 20
+  model_path=(os.environ['HOME'] + "/IsaacGymEnvs/isaacgymenvs/runs/Chair_09-15-53-41/nn/Chair.onnx")
+  numRotationHis = 7
+  numActionHis = 7
   rotation_history = np.zeros([numRotationHis, 4])
   rotation_history[:,  3] = 1.0
   action_history = np.ones([numActionHis, 6])

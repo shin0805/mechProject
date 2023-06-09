@@ -23,8 +23,8 @@ def imuCb(msg):
   imu_msg = msg
   print("--- imu ---")
   print(str(imu_msg.orientation))
-  # print("\n")
-  # print(str(quaternion_to_euler(imu_msg.orientation)))
+  print("\n")
+  print(str(quaternion_to_euler(imu_msg.orientation)))
   print("\n")
 
 def eulerCb(msg):
@@ -41,7 +41,7 @@ def calibCb(msg):
   print("\n")
 
 rospy.init_node('view', anonymous=True)
-# rospy.Subscriber("sensor/imu", Imu, imuCb)
-rospy.Subscriber("sensor/euler", Vector3, eulerCb)
+rospy.Subscriber("sensor/imu", Imu, imuCb)
+# rospy.Subscriber("sensor/euler", Vector3, eulerCb)
 # rospy.Subscriber("sensor/calib", Int16MultiArray, calibCb)
 rospy.spin()
