@@ -80,26 +80,26 @@ void sensorLoop()
   imu_msg.orientation.z = quat.z();
   imu_msg.orientation.w = quat.w();
 
-  imu::Vector<3> euler = bno.getVector(Adafruit_BNO055::VECTOR_EULER);
-  euler_msg.x = euler.x();
-  euler_msg.y = euler.y();
-  euler_msg.z = euler.z();
+  // imu::Vector<3> euler = bno.getVector(Adafruit_BNO055::VECTOR_EULER);
+  // euler_msg.x = euler.x();
+  // euler_msg.y = euler.y();
+  // euler_msg.z = euler.z();
 
-  imu::Vector<3> acc = bno.getVector(Adafruit_BNO055::VECTOR_ACCELEROMETER);
-  imu_msg.linear_acceleration.x = acc.x();
-  imu_msg.linear_acceleration.y = acc.y();
-  imu_msg.linear_acceleration.z = acc.z();
-  
-  uint8_t system, gyro, accel, mag = 0;
-  bno.getCalibration(&system, &gyro, &accel, &mag);
-  calib_msg.data[0] = system;
-  calib_msg.data[1] = gyro;
-  calib_msg.data[2] = accel;
-  calib_msg.data[3] = mag;
+  // imu::Vector<3> acc = bno.getVector(Adafruit_BNO055::VECTOR_ACCELEROMETER);
+  // imu_msg.linear_acceleration.x = acc.x();
+  // imu_msg.linear_acceleration.y = acc.y();
+  // imu_msg.linear_acceleration.z = acc.z();
+  // 
+  // uint8_t system, gyro, accel, mag = 0;
+  // bno.getCalibration(&system, &gyro, &accel, &mag);
+  // calib_msg.data[0] = system;
+  // calib_msg.data[1] = gyro;
+  // calib_msg.data[2] = accel;
+  // calib_msg.data[3] = mag;
 
   imu_pub.publish(&imu_msg);
-  euler_pub.publish(&euler_msg);
-  calib_pub.publish(&calib_msg);
+  // euler_pub.publish(&euler_msg);
+  // calib_pub.publish(&calib_msg);
 }
 
 // param
@@ -130,17 +130,17 @@ void setup() {
 void loop() {
   unsigned long now = millis();
 
-  if ((now - servo_timer) > 50 ) {
+  if ((now - servo_timer) >= 100 ) {
     servoLoop();
     servo_timer = now;
   }
 
-  if ((now - sensor_timer) > 50 ) {
+  if ((now - sensor_timer) >= 100 ) {
     sensorLoop();
     sensor_timer = now;
   }
 
-  if ((now - param_timer) > 500 ) {
+  if ((now - param_timer) >= 500 ) {
     paramLoad();
     param_timer = now;
   }
