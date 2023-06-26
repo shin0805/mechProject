@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 import os
 import time
+import sys
 
 import onnxruntime
 import numpy as np
@@ -17,8 +18,7 @@ from config import *
 
 command = Int16MultiArray()
 commands = SLEEPING_POS # SKIP
-commands = np.concatenate([commands, STANDING_POS], 0) # SKIP
-commands = np.concatenate([commands, STANDING_POS], 0) # SKIP
+commands = np.concatenate([commands, STANDING_POS], 0) # SKIP commands = np.concatenate([commands, STANDING_POS], 0) # SKIP
 
 euler_msg = Vector3()
 imu_msg = Imu()
@@ -43,7 +43,8 @@ def eulerCb(msg):
   euler_msg = msg
 
 def run_onnx_model(model_path, input_data):
-  session = onnxruntime.InferenceSession(model_path)
+  # session = onnxruntime.InferenceSession(model_path, providers=['TensorrtExecutionProvider', 'CUDAExecutionProvider', 'CPUExecutionProvider'])
+  session = onnxruntime.InferenceSession(model_path, providers=['CPUExecutionProvider'])
 
   input_name = session.get_inputs()[0].name
   input_shape = session.get_inputs()[0].shape
@@ -71,10 +72,10 @@ if __name__=="__main__":
   rospy.Subscriber("sensor/euler", Vector3, eulerCb)
   rospy.Subscriber("sensor/imu", Imu, imuCb)
   pub = rospy.Publisher('servo/command', Int16MultiArray, queue_size=1)
-  rate = rospy.Rate(20)
-  model_path=(os.environ['HOME'] + "/IsaacGymEnvs/isaacgymenvs/runs/Chair_20-19-55-15/nn/Chair.onnx")
-  numRotationHis = 7
-  numActionHis = 7
+  rate = rospy.Rate(10)
+  model_path=(os.environ['HOME'] + "/mechProject/models/walk/" + sys.argv[1])
+  numRotationHis = 4
+  numActionHis = 4
   rotation_history = np.zeros([numRotationHis, 4])
   rotation_history[:,  3] = 1.0
   action_history = np.ones([numActionHis, 6])
