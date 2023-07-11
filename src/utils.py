@@ -20,6 +20,14 @@ def compute_heading_and_up(
 
     return torso_quat, up_proj, heading_proj, up_vec, heading_vec
 
+def compute_up_proj(torso_rotation, inv_start_rot, vec1, up_idx):
+    # type: (Tensor, Tensor, Tensor, int) -> Tensor
+    torso_quat = quat_mul(torso_rotation, inv_start_rot)
+    up_vec = get_basis_vector(torso_quat, vec1)
+    up_proj = up_vec[0, up_idx]
+
+    return up_proj
+
 def compute_rot(torso_quat, targets, torso_positions):
     roll, pitch, yaw = get_euler_xyz(torso_quat)
 
@@ -62,6 +70,10 @@ def quat_rotate(q, v):
     q_w = q[:, -1]
     q_vec = q[:, :3]
     a = v * (2.0 * q_w ** 2 - 1.0).unsqueeze(-1)
+    # print(q_vec.shape) 1, 3
+    # print(v.shape) 1, 3
+    # q_vec = q_vec.double()
+    # v = v.double()
     b = torch.cross(q_vec, v, dim=-1) * q_w.unsqueeze(-1) * 2.0
     c = q_vec * \
         torch.bmm(q_vec.view(shape[0], 1, 3), v.view(

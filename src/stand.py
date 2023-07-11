@@ -73,38 +73,60 @@ if __name__=="__main__":
   rospy.Subscriber("sensor/imu", Imu, imuCb)
   pub = rospy.Publisher('servo/command', Int16MultiArray, queue_size=1)
   rate = rospy.Rate(10)
-  model_path=(os.environ['HOME'] + "/mechProject/models/" + sys.argv[1])
+  model_path=(os.environ['HOME'] + "/mechProject/models/stand/Stand_11-00-06-25_success.onnx")
   numRotationHis = 4
   numActionHis = 4
   rotation_history = np.zeros([numRotationHis, 4])
   rotation_history[:,  3] = 1.0
   action_history = np.ones([numActionHis, 6])
   
-  # device='cuda'
-  # start_rotation = torch.tensor([0, 0, 0, 1], device=device)
-  # inv_start_rot = quat_conjugate(start_rotation)
-  # targets = to_torch([10, 0, 0], device=.device)
+  device='cuda'
+  start_rotation = to_torch([[0, 0, 0, 1.]], device=device)
+  inv_start_rot = quat_conjugate(start_rotation)
+  # targets = to_torch([10, 0, 0], device=device)
+
+  state = 'stood'
   
   while not rospy.is_shutdown():
     # action
     action = run_onnx_model(model_path, np.concatenate([rotation_history.flatten(), action_history.flatten()], 0))
-    commands = np.concatenate([commands, simRad2realDeg(action)], 0)
-    command.data = commands[0, :].tolist()
-    if (commands.shape[0] - 1):
-      commands = np.delete(commands, 0, 0)
-    print(command.data)
-    pub.publish(safeClip(command))
 
     # obs
     rotation = np.array([[-imu_msg.orientation.x, -imu_msg.orientation.y, imu_msg.orientation.z, imu_msg.orientation.w]])
     rotation_history = np.concatenate([rotation, rotation_history], 0)[:-1, :]
     action_history = np.concatenate([action, action_history], 0)[:-1, :]
 
-    # torso_rotation = torch.tensor(rotation, device=device)
-    # to_target = targets - torso_position
-    # to_target[:, 2] = 0
-    # torso_quat, up_proj, heading_proj, up_vec, heading_vec = compute_heading_and_up(
-    #     torso_rotation, inv_start_rot, to_target, basis_vec0, basis_vec1, 2)
-    # roll, pitch, yaw, angle_to_target = compute_rot(torso_quat, targets, torso_position)
+    # up_proj
+    torso_rotation = to_torch(rotation, device=device)
+    basis_vec1 = to_torch([[0, 0, 1.]], device=device)
+    up_proj = compute_up_proj(torso_rotation, inv_start_rot, basis_vec1, 2).cpu().item()
+
+
+    if state == 'down':
+      print('down')
+      commands = np.concatenate([commands, simRad2realDeg(action)], 0)
+      if up_proj > 0.95:
+          state = 'up'
+    elif state == 'up':
+      print('up')
+      commands = np.concatenate([commands, linspace(np.array([commands[0, :].tolist()]), SLEEPING_POS, 10)], 0)
+      commands = np.concatenate([commands, linspace(SLEEPING_POS, STANDING_POS, 7)], 0)
+      state = 'standing'
+    elif state == 'standing':
+      print('standing')
+      if commands.shape[0] == 1:
+          state = 'stood'
+    elif state == 'stood':
+      if up_proj < 0.7:
+        state = 'down'
+      print('stood')
+        
+
+    command.data = commands[0, :].tolist()
+    if (commands.shape[0] - 1):
+      commands = np.delete(commands, 0, 0)
+    print(command.data)
+    pub.publish(safeClip(command))
+
 
     rate.sleep()
