@@ -19,13 +19,13 @@ data.data = [90, 90, 90, 90, 90, 90]
 while not rospy.is_shutdown():
   tmp = [90, 90, 90, 90, 90, 90]
   if step % 4 == 0:
-    tmp[check_port] = 85
+    tmp[check_port] = 0
     print('0')
   elif step % 4 == 1:
     tmp[check_port] = 90
     print('90')
   elif step % 4 == 2:
-    tmp[check_port] = 95
+    tmp[check_port] = 180
     print('180')
   elif step % 4 == 3:
     tmp[check_port] = 90
@@ -36,6 +36,6 @@ while not rospy.is_shutdown():
 
   rate.sleep()
 
-  if (time.time() - st) >= 0.05:
+  if (time.time() - st) >= 1:
     step += 1
     st = time.time()
