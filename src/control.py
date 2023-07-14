@@ -113,8 +113,8 @@ while not rospy.is_shutdown():
   if plan:
     if flag == 0:
       print("===== flag 0 =====")
-      # for i in range(100):
-      #   addStep()
+      for i in range(100):
+        addStep()
       addStep()
       addStep()
     elif flag == 1:
